@@ -1,6 +1,6 @@
 // lib/services/sheets_service.dart
-import 'package:flutter/services.dart';
 import 'package:googleapis/sheets/v4.dart' as sheets;
+import 'package:googleapis_auth/auth_io.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:logger/logger.dart';
@@ -32,14 +32,9 @@ class SheetsService {
       _isInitialized = true;
       _logger.i('Google Sign-In successful: ${account.email}');
       return true;
-    } on PlatformException catch (e, st) {
-      _logger.e('Sign-in PlatformException: ${e.code} ${e.message}');
-      _logger.d(st);
-      rethrow;
-    } catch (e, st) {
+    } catch (e) {
       _logger.e('Sign-in failed: $e');
-      _logger.d(st);
-      rethrow;
+      return false;
     }
   }
 
@@ -58,9 +53,8 @@ class SheetsService {
       _sheetsApi = sheets.SheetsApi(authClient);
       _isInitialized = true;
       return true;
-    } catch (e, st) {
+    } catch (e) {
       _logger.w('Auto sign-in failed: $e');
-      _logger.d(st);
       return false;
     }
   }
@@ -88,30 +82,8 @@ class SheetsService {
       return true;
     } catch (e) {
       _logger.e('Failed to add expense: $e');
-      // Helpful diagnostics for common setup issues (wrong sheet tab name / range).
-      try {
-        final titles = await fetchSheetTitles();
-        _logger.w('Available sheet tabs: ${titles.join(', ')}');
-        _logger.w('Configured writeRange: ${AppConstants.writeRange}');
-      } catch (diagErr) {
-        _logger.w('Failed to fetch sheet titles for diagnostics: $diagErr');
-      }
       rethrow;
     }
-  }
-
-  Future<List<String>> fetchSheetTitles() async {
-    if (!_isInitialized || _sheetsApi == null) {
-      throw Exception('Not authenticated.');
-    }
-    final spreadsheet = await _sheetsApi!.spreadsheets.get(
-      AppConstants.spreadsheetId,
-      includeGridData: false,
-    );
-    return (spreadsheet.sheets ?? [])
-        .map((s) => s.properties?.title)
-        .whereType<String>()
-        .toList(growable: false);
   }
 
   // ─── Read All Expenses ─────────────────────────────────────────────────────
@@ -145,8 +117,9 @@ class SheetsService {
     final targetMonth = month ?? now.month;
 
     final all = await fetchAllExpenses();
-    final filtered = all.where((e) =>
-        e.date.year == targetYear && e.date.month == targetMonth).toList();
+    final filtered = all
+        .where((e) => e.date.year == targetYear && e.date.month == targetMonth)
+        .toList();
 
     final byCategory = <String, double>{};
     for (final e in filtered) {

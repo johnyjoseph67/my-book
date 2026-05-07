@@ -34,16 +34,11 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future<bool> signIn() async {
     _setLoading();
-    try {
-      _isSignedIn = await _service.signIn();
-      if (_isSignedIn) {
-        await loadDashboard();
-      } else {
-        _setError('Sign-in cancelled.');
-      }
-    } catch (e) {
-      _setError(e.toString());
-      _isSignedIn = false;
+    _isSignedIn = await _service.signIn();
+    if (_isSignedIn) {
+      await loadDashboard();
+    } else {
+      _setError('Sign-in failed. Please try again.');
     }
     notifyListeners();
     return _isSignedIn;
