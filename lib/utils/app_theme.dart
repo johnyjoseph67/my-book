@@ -89,7 +89,8 @@ class AppConstants {
 
   // Sheet tab names — update to match your sheet
   // Your spreadsheet tab is currently named "Expences" (per runtime diagnostics).
-  static const String expenseSheet = 'Expences';
+  // static const String expenseSheet = 'Expences';
+  static const String expenseSheet = 'May';
   static const String dashboardSheet = 'Dashboard';
 
   // Column order in your Google Sheet
@@ -126,25 +127,35 @@ class AppConstants {
         color: Color(0xFFEEEDFE),
         textColor: Color(0xFF3C3489)),
     ExpenseCategory(
+        name: 'Settlement',
+        emoji: '💰',
+        color: Color(0xFFE1F5EE),
+        textColor: Color(0xFF085041)),
+    ExpenseCategory(
         name: 'Leisure',
         emoji: '🎮',
         color: Color(0xFFFAECE7),
         textColor: Color(0xFF712B13)),
-    ExpenseCategory(
-        name: 'Education',
-        emoji: '🎓',
-        color: Color(0xFFEAF3DE),
-        textColor: Color(0xFF27500A)),
     ExpenseCategory(
         name: 'Savings',
         emoji: '💰',
         color: Color(0xFFE1F5EE),
         textColor: Color(0xFF085041)),
     ExpenseCategory(
+        name: 'Education',
+        emoji: '🎓',
+        color: Color(0xFFEAF3DE),
+        textColor: Color(0xFF27500A)),
+    ExpenseCategory(
         name: 'Other',
         emoji: '📦',
         color: Color(0xFFF1EFE8),
         textColor: Color(0xFF444441)),
+    ExpenseCategory(
+        name: 'To India',
+        emoji: '💰',
+        color: Color(0xFFE1F5EE),
+        textColor: Color(0xFF085041)),
   ];
 
   static const List<String> paymentMethods = [
@@ -158,7 +169,16 @@ class AppConstants {
 
   static const Map<String, List<String>> subCategories = {
     'Housing': ['Rent', 'Mortgage', 'Maintenance', 'Insurance', 'Furniture'],
-    'Food': ['Groceries', 'Restaurants', 'Takeaway', 'Coffee', 'Delivery'],
+    'Settlement': ['Settlement'],
+    'Food': [
+      'Groceries',
+      'Vegitable',
+      'Meat & Chicken',
+      'Egg',
+      'Fruits',
+      'Takeaway',
+      'Delivery'
+    ],
     'Transport': [
       'Fuel',
       'Taxi/Uber',
@@ -167,14 +187,24 @@ class AppConstants {
       'Car Service'
     ],
     'Health': ['Doctor', 'Pharmacy', 'Gym', 'Insurance', 'Dental'],
+    'To India': ['Home', 'Other'],
     'Utilities': [
       'Electricity (DEWA)',
       'Water',
       'Internet',
       'Mobile',
+      'Shopping',
       'TV Subscription'
     ],
-    'Leisure': ['Entertainment', 'Sports', 'Travel', 'Hobbies', 'Shopping'],
+    'Leisure': [
+      'Entertainment',
+      'Sports',
+      'Restaurants',
+      'Travel',
+      'Hobbies',
+      'Shopping',
+      'Coffee'
+    ],
     'Education': ['Tuition', 'Books', 'Courses', 'Stationery', 'School Fees'],
     'Savings': ['Emergency Fund', 'Investment', 'Retirement', 'Goal Saving'],
     'Other': ['Gifts', 'Charity', 'Miscellaneous'],

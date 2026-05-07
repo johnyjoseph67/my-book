@@ -44,14 +44,14 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _NavItem(
-                  icon: '🏠',
+                  icon: Icons.home,
                   label: 'Home',
                   isActive: _currentIndex == 0,
                   onTap: () => setState(() => _currentIndex = 0),
                 ),
                 _AddButton(onTap: () => setState(() => _currentIndex = 1)),
                 _NavItem(
-                  icon: '📊',
+                  icon: Icons.dashboard,
                   label: 'Dashboard',
                   isActive: _currentIndex == 2,
                   onTap: () => setState(() => _currentIndex = 2),
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _NavItem extends StatelessWidget {
-  final String icon;
+  final IconData icon;
   final String label;
   final bool isActive;
   final VoidCallback onTap;
@@ -85,7 +85,11 @@ class _NavItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(icon, style: const TextStyle(fontSize: 20)),
+          Icon(
+            icon,
+            color: isActive ? AppTheme.primary : AppTheme.textSecondary,
+          ),
+          // Text(icon, style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 2),
           Text(
             label,

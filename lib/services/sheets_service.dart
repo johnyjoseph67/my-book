@@ -130,7 +130,7 @@ class SheetsService {
       year: targetYear,
       month: targetMonth,
       totalSpent: filtered.fold(0, (sum, e) => sum + e.amount),
-      budget: 6000, // TODO: read budget from a Settings sheet row
+      budget: 4000, // TODO: read budget from a Settings sheet row
       byCategory: byCategory,
       expenses: filtered,
     );
@@ -156,7 +156,7 @@ class SheetsService {
         year: date.year,
         month: date.month,
         totalSpent: filtered.fold(0, (sum, e) => sum + e.amount),
-        budget: 6000,
+        budget: 4000,
         byCategory: byCategory,
         expenses: filtered,
       ));

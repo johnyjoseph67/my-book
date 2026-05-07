@@ -8,15 +8,15 @@ class CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 140,
       child: GridView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 1),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisSpacing: 10,
-          crossAxisSpacing: 8,
-          childAspectRatio: 0.8,
+          crossAxisSpacing: 1,
+          childAspectRatio: 0.9,
         ),
         itemCount: AppConstants.categories.length,
         itemBuilder: (_, i) {
@@ -32,11 +32,10 @@ class CategoryGrid extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(
-                  child: Text(cat.emoji,
-                      style: const TextStyle(fontSize: 20)),
+                  child: Text(cat.emoji, style: const TextStyle(fontSize: 20)),
                 ),
               ),
-              const SizedBox(height: 4),
+              // const SizedBox(height: 4),
               Text(
                 cat.name,
                 style: const TextStyle(
