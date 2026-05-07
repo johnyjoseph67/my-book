@@ -1,4 +1,5 @@
 // lib/screens/home_screen.dart
+import 'package:expense_tracker/screens/history_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _HomePage(),
     AddExpenseScreen(),
     DashboardScreen(),
+    HistoryScreen()
   ];
 
   @override
@@ -49,13 +51,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   isActive: _currentIndex == 0,
                   onTap: () => setState(() => _currentIndex = 0),
                 ),
-                _AddButton(onTap: () => setState(() => _currentIndex = 1)),
                 _NavItem(
                   icon: Icons.dashboard,
                   label: 'Dashboard',
                   isActive: _currentIndex == 2,
                   onTap: () => setState(() => _currentIndex = 2),
                 ),
+                _NavItem(
+                  icon: Icons.history,
+                  label: 'History',
+                  isActive: _currentIndex == 3,
+                  onTap: () => setState(() => _currentIndex = 3),
+                ),
+                // _NavItem(
+                //   icon: Icons.add,
+                //   label: 'Add Expense',
+                //   isActive: _currentIndex == 2,
+                //   onTap: () => setState(() => _currentIndex = 2),
+                // ),
+                _NavItem(
+                  icon: Icons.add,
+                  label: 'Add',
+                  isActive: _currentIndex == 1,
+                  onTap: () => setState(() => _currentIndex = 1),
+                ),
+                // _AddButton(onTap: () => setState(() => _currentIndex = 1)),
               ],
             ),
           ),

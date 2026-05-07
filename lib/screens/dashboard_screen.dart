@@ -118,16 +118,16 @@ class DashboardScreen extends StatelessWidget {
                     byCategory: summary.byCategory,
                     total: summary.totalSpent,
                   ),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
                   // ── All Transactions ──────────────────────────────────────
-                  _SectionTitle('All Transactions'),
-                  const SizedBox(height: 10),
-                  ...provider.expenses.map((e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: ExpenseTile(expense: e),
-                      )),
-                  const SizedBox(height: 100),
+                  // _SectionTitle('All Transactions'),
+                  // const SizedBox(height: 10),
+                  // ...provider.expenses.map((e) => Padding(
+                  //       padding: const EdgeInsets.only(bottom: 8),
+                  //       child: ExpenseTile(expense: e),
+                  //     )),
+                  // const SizedBox(height: 0),
                 ],
               ),
             ),
