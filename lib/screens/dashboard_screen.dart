@@ -45,89 +45,123 @@ class DashboardScreen extends StatelessWidget {
           return RefreshIndicator(
             color: AppTheme.primary,
             onRefresh: provider.refreshData,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── KPI Row ────────────────────────────────────────────────
-                  _SectionTitle(
-                      '${summary.monthName} ${summary.year} Overview'),
-                  const SizedBox(height: 10),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 1.7,
-                    children: [
-                      _KpiCard(
-                        label: 'Total Spent',
-                        value: 'AED ${_fmtShort.format(summary.totalSpent)}',
-                        sub:
-                            '${summary.percentUsed.toStringAsFixed(1)}% of budget',
-                        color: AppTheme.danger,
+                children: <Widget>[
+                       const SizedBox(height: 20),
+                   SizedBox(
+                height: 50,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      final _trend = provider.trend;
+                      return GestureDetector(
+                        onTap:  () => context.read<ExpenseProvider>().refreshData(year: _trend[index].year,month: _trend[index].month),
+                        child: Container(
+                          decoration: BoxDecoration(color: AppTheme.primary,borderRadius: BorderRadius.circular(10)),
+                          height: 20,width: 80,
+                          child: Center(child: Text(_trend[index].monthName,style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(width: 10,);
+                    },
+                    itemCount: provider.trend.length),
+              ),
+                const SizedBox(height: 10),
+                 _SectionTitle(
+                              '${summary.monthName} ${summary.year} Overview'),
+                                const SizedBox(height: 10),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // ── KPI Row ────────────────────────────────────────────────
+                         
+                          const SizedBox(height: 10),
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 1.7,
+                            children: [
+                              _KpiCard(
+                                label: 'Total Spent',
+                                value: 'AED ${_fmtShort.format(summary.totalSpent)}',
+                                sub:
+                                    '${summary.percentUsed.toStringAsFixed(1)}% of budget',
+                                color: AppTheme.danger,
+                              ),
+                              _KpiCard(
+                                label: 'Remaining',
+                                value:
+                                    'AED ${_fmtShort.format(summary.remaining.clamp(0, double.infinity))}',
+                                sub: 'Budget: AED ${_fmtShort.format(summary.budget)}',
+                                color: AppTheme.primary,
+                              ),
+                              _KpiCard(
+                                label: 'Transactions',
+                                value: '${summary.expenses.length}',
+                                sub: 'this month',
+                                color: AppTheme.info,
+                              ),
+                              _KpiCard(
+                                label: 'Daily Average',
+                                value:
+                                    'AED ${_fmtShort.format(summary.totalSpent / DateTime.now().day)}',
+                                sub: 'per day',
+                                color: AppTheme.warning,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                      
+                          // ── Budget Progress ────────────────────────────────────────
+                          _SectionTitle('Budget Usage'),
+                          const SizedBox(height: 10),
+                          _BudgetProgressCard(summary: summary),
+                          const SizedBox(height: 20),
+                      
+                          // ── Monthly Trend Bar Chart ────────────────────────────────
+                          _SectionTitle('6-Month Trend'),
+                          const SizedBox(height: 10),
+                          _TrendChart(trend: provider.trend),
+                          const SizedBox(height: 20),
+                      
+                          // ── Category Pie Chart ────────────────────────────────────
+                          _SectionTitle('Spending by Category'),
+                          const SizedBox(height: 10),
+                          _CategoryPieCard(byCategory: summary.byCategory),
+                          const SizedBox(height: 20),
+                      
+                          // ── Category Breakdown Bars ───────────────────────────────
+                          _SectionTitle('Category Breakdown'),
+                          const SizedBox(height: 10),
+                          _CategoryBreakdown(
+                            byCategory: summary.byCategory,
+                            total: summary.totalSpent,
+                          ),
+                          // const SizedBox(height: 20),
+                      
+                          // ── All Transactions ──────────────────────────────────────
+                          // _SectionTitle('All Transactions'),
+                          // const SizedBox(height: 10),
+                          // ...provider.expenses.map((e) => Padding(
+                          //       padding: const EdgeInsets.only(bottom: 8),
+                          //       child: ExpenseTile(expense: e),
+                          //     )),
+                          // const SizedBox(height: 0),
+                        ],
                       ),
-                      _KpiCard(
-                        label: 'Remaining',
-                        value:
-                            'AED ${_fmtShort.format(summary.remaining.clamp(0, double.infinity))}',
-                        sub: 'Budget: AED ${_fmtShort.format(summary.budget)}',
-                        color: AppTheme.primary,
-                      ),
-                      _KpiCard(
-                        label: 'Transactions',
-                        value: '${summary.expenses.length}',
-                        sub: 'this month',
-                        color: AppTheme.info,
-                      ),
-                      _KpiCard(
-                        label: 'Daily Average',
-                        value:
-                            'AED ${_fmtShort.format(summary.totalSpent / DateTime.now().day)}',
-                        sub: 'per day',
-                        color: AppTheme.warning,
-                      ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 20),
-
-                  // ── Budget Progress ────────────────────────────────────────
-                  _SectionTitle('Budget Usage'),
-                  const SizedBox(height: 10),
-                  _BudgetProgressCard(summary: summary),
-                  const SizedBox(height: 20),
-
-                  // ── Monthly Trend Bar Chart ────────────────────────────────
-                  _SectionTitle('6-Month Trend'),
-                  const SizedBox(height: 10),
-                  _TrendChart(trend: provider.trend),
-                  const SizedBox(height: 20),
-
-                  // ── Category Pie Chart ────────────────────────────────────
-                  _SectionTitle('Spending by Category'),
-                  const SizedBox(height: 10),
-                  _CategoryPieCard(byCategory: summary.byCategory),
-                  const SizedBox(height: 20),
-
-                  // ── Category Breakdown Bars ───────────────────────────────
-                  _SectionTitle('Category Breakdown'),
-                  const SizedBox(height: 10),
-                  _CategoryBreakdown(
-                    byCategory: summary.byCategory,
-                    total: summary.totalSpent,
-                  ),
-                  // const SizedBox(height: 20),
-
-                  // ── All Transactions ──────────────────────────────────────
-                  // _SectionTitle('All Transactions'),
-                  // const SizedBox(height: 10),
-                  // ...provider.expenses.map((e) => Padding(
-                  //       padding: const EdgeInsets.only(bottom: 8),
-                  //       child: ExpenseTile(expense: e),
-                  //     )),
-                  // const SizedBox(height: 0),
                 ],
               ),
             ),
@@ -151,7 +185,7 @@ class _SectionTitle extends StatelessWidget {
       style: const TextStyle(
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        color: AppTheme.textSecondary,
+        color: AppTheme.dark,
         letterSpacing: 0.5,
       ),
     );

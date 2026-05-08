@@ -54,11 +54,11 @@ class ExpenseProvider extends ChangeNotifier {
   }
 
   // ─── Data Loading ──────────────────────────────────────────────────────────
-  Future<void> loadDashboard() async {
+  Future<void> loadDashboard({int? month, int? year}) async {
     _setLoading();
     try {
       final results = await Future.wait([
-        _service.fetchMonthlySummary(),
+        _service.fetchMonthlySummary(month: month,year: year),
         _service.fetchTrend(),
         _service.fetchAllExpenses(),
       ]);
@@ -72,7 +72,7 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> refreshData() => loadDashboard();
+  Future<void> refreshData({int? year, int? month}) => loadDashboard(year: year, month: month);
 
   // ─── Add Expense ───────────────────────────────────────────────────────────
   Future<bool> addExpense(Expense expense) async {

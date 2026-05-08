@@ -114,7 +114,8 @@ class SheetsService {
   Future<MonthlySummary> fetchMonthlySummary({int? year, int? month}) async {
     final now = DateTime.now();
     final targetYear = year ?? now.year;
-    final targetMonth = month ?? now.month;
+    final targetMonth = month ?? now.month ;
+    print('targetYear $targetYear targetMonth $targetMonth');
 
     final all = await fetchAllExpenses();
     final filtered = all
