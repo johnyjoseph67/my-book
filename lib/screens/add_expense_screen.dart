@@ -219,7 +219,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen>
               const SizedBox(height: 20),
 
               // ── Sub-category Dropdown ─────────────────────────────────────
-              _SectionLabel('Sub-category'),
+              const _SectionLabel('Sub-category'),
               const SizedBox(height: 8),
               _StyledDropdown<String>(
                 value: _selectedSubCategory,
@@ -291,7 +291,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen>
               const SizedBox(height: 20),
 
               // ── Note ──────────────────────────────────────────────────────
-              _SectionLabel('Note (optional)'),
+              const _SectionLabel('Note (optional)'),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _noteController,
