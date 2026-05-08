@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../models/expense_model.dart';
 import '../services/expense_provider.dart';
 import '../utils/app_theme.dart';
-import '../widgets/expense_tile.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -57,13 +56,13 @@ class DashboardScreen extends StatelessWidget {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                     itemBuilder: (BuildContext context, int index) {
-                      final _trend = provider.trend;
+                      final trend = provider.trend;
                       return GestureDetector(
-                        onTap:  () => context.read<ExpenseProvider>().refreshData(year: _trend[index].year,month: _trend[index].month),
+                        onTap:  () => context.read<ExpenseProvider>().refreshData(year: trend[index].year,month: trend[index].month),
                         child: Container(
                           decoration: BoxDecoration(color: AppTheme.primary,borderRadius: BorderRadius.circular(10)),
                           height: 20,width: 80,
-                          child: Center(child: Text(_trend[index].monthName,style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),),
+                          child: Center(child: Text(trend[index].monthName,style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),),
                         ),
                       );
                     },
@@ -124,25 +123,25 @@ class DashboardScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                       
                           // ── Budget Progress ────────────────────────────────────────
-                          _SectionTitle('Budget Usage'),
+                          const _SectionTitle('Budget Usage'),
                           const SizedBox(height: 10),
                           _BudgetProgressCard(summary: summary),
                           const SizedBox(height: 20),
                       
                           // ── Monthly Trend Bar Chart ────────────────────────────────
-                          _SectionTitle('6-Month Trend'),
+                          const _SectionTitle('6-Month Trend'),
                           const SizedBox(height: 10),
                           _TrendChart(trend: provider.trend),
                           const SizedBox(height: 20),
                       
                           // ── Category Pie Chart ────────────────────────────────────
-                          _SectionTitle('Spending by Category'),
+                          const _SectionTitle('Spending by Category'),
                           const SizedBox(height: 10),
                           _CategoryPieCard(byCategory: summary.byCategory),
                           const SizedBox(height: 20),
                       
                           // ── Category Breakdown Bars ───────────────────────────────
-                          _SectionTitle('Category Breakdown'),
+                          const _SectionTitle('Category Breakdown'),
                           const SizedBox(height: 10),
                           _CategoryBreakdown(
                             byCategory: summary.byCategory,
