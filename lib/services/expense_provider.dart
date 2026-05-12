@@ -12,9 +12,11 @@ class ExpenseProvider extends ChangeNotifier {
   LoadState _loadState = LoadState.idle;
   String _errorMessage = '';
 
+
   List<Expense> _expenses = [];
   MonthlySummary? _currentSummary;
   List<MonthlySummary> _trend = [];
+  AccountInfo? _accountInfo;
 
   // ─── Getters ───────────────────────────────────────────────────────────────
   bool get isSignedIn => _isSignedIn;
@@ -24,6 +26,7 @@ class ExpenseProvider extends ChangeNotifier {
   MonthlySummary? get currentSummary => _currentSummary;
   List<MonthlySummary> get trend => _trend;
   bool get isLoading => _loadState == LoadState.loading;
+  AccountInfo? get acccountInfo=>_accountInfo;
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   Future<void> initAuth() async {
@@ -34,7 +37,8 @@ class ExpenseProvider extends ChangeNotifier {
 
   Future<bool> signIn() async {
     _setLoading();
-    _isSignedIn = await _service.signIn();
+    final signIn=await _service.signIn();
+    _isSignedIn = signIn.isLogIn;
     if (_isSignedIn) {
       await loadDashboard();
     } else {

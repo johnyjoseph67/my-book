@@ -22,19 +22,20 @@ class SheetsService {
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
 
-  Future<bool> signIn() async {
+  Future<AccountInfo> signIn() async {
     try {
       final account = await _googleSignIn.signIn();
-      if (account == null) return false;
+      
+      if (account == null) return AccountInfo(name: '',emailId: '', isLogIn: false);
       final authClient = await _googleSignIn.authenticatedClient();
-      if (authClient == null) return false;
+      if (authClient == null) return AccountInfo(name: '',emailId: '', isLogIn: false);
       _sheetsApi = sheets.SheetsApi(authClient);
       _isInitialized = true;
       _logger.i('Google Sign-In successful: ${account.email}');
-      return true;
+      return AccountInfo(name: account.email,emailId: account.email, isLogIn: true);
     } catch (e) {
       _logger.e('Sign-in failed: $e');
-      return false;
+      return AccountInfo(name: '',emailId: '', isLogIn: false);
     }
   }
 

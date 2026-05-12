@@ -1,7 +1,14 @@
 // lib/models/expense_model.dart
 import 'package:flutter/material.dart';
 import '../utils/app_theme.dart';
+class AccountInfo {
+  final String? name;
+  final String emailId;
+  final bool isLogIn;
 
+  AccountInfo({required this.name,required this.emailId, required this.isLogIn});
+  
+}
 class Expense {
   final String id;
   final DateTime date;

@@ -1,4 +1,5 @@
 // lib/screens/home_screen.dart
+import 'package:expense_tracker/screens/custom_drawer.dart';
 import 'package:expense_tracker/screens/history_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
@@ -162,6 +163,8 @@ class _HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
+        drawer: CustomDrawer(),
+  
       body: RefreshIndicator(
         color: AppTheme.primary,
         onRefresh: () => context.read<ExpenseProvider>().refreshData(),
@@ -173,7 +176,10 @@ class _HomePage extends StatelessWidget {
               pinned: true,
               backgroundColor: AppTheme.dark,
               title: Consumer<ExpenseProvider>(
-                builder: (_, provider, __) => Column(
+                builder: (_, provider, __) {
+                  
+               
+                   return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -184,11 +190,12 @@ class _HomePage extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                 
                     // const Text('My Expenses',
                     //     style: TextStyle(
                     //         fontSize: 18, fontWeight: FontWeight.w600)),
                   ],
-                ),
+                );}
               ),
               actions: [
                 Consumer<ExpenseProvider>(
