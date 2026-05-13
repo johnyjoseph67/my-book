@@ -1,6 +1,3 @@
-
-import 'dart:ui';
-
 import 'package:expense_tracker/services/expense_provider.dart';
 import 'package:expense_tracker/utils/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -11,13 +8,10 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child:Consumer<ExpenseProvider>(builder: (_, provider, __){
-      
-      final accountInfo=provider.acccountInfo;
-   return    Column(
+    return Drawer(child: Consumer<ExpenseProvider>(builder: (_, provider, __) {
+      final accountInfo = provider.acccountInfo;
+      return Column(
         children: [
-
           // TOP HEADER
           Container(
             width: double.infinity,
@@ -28,12 +22,14 @@ class CustomDrawer extends StatelessWidget {
             color: AppTheme.dark,
             child: Column(
               children: [
-
                 // PROFILE IMAGE
-                CircleAvatar(
+                const CircleAvatar(
+                  backgroundColor: AppTheme.primary,
                   radius: 40,
-                  backgroundImage: NetworkImage(
-                    "https://i.pravatar.cc/150?img=3",
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 40,
                   ),
                 ),
 
@@ -41,7 +37,7 @@ class CustomDrawer extends StatelessWidget {
 
                 // NAME
                 Text(
-                  "${accountInfo!=null?accountInfo.name:''}",
+                  "${accountInfo != null ? accountInfo.name : ''}",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -50,7 +46,6 @@ class CustomDrawer extends StatelessWidget {
                 ),
 
                 // EMAIL
-              
               ],
             ),
           ),
@@ -60,33 +55,31 @@ class CustomDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-
                 drawerItem(
                   icon: Icons.logout_sharp,
                   title: "Log Out",
                   isSelected: true,
-                  ontap:() async {
-                      await provider.signOut();
-                      if (context.mounted) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/', (r) => false);
-                      }
-                    },
+                  ontap: () async {
+                    await provider.signOut();
+                    if (context.mounted) {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/', (r) => false);
+                    }
+                  },
                 ),
-
-                
               ],
             ),
           ),
         ],
-      );}
-    ));
+      );
+    }));
   }
 
   // DRAWER ITEM WIDGET
   Widget drawerItem({
     required IconData icon,
-    required String title,required VoidCallback ontap,
+    required String title,
+    required VoidCallback ontap,
     bool isSelected = false,
   }) {
     return Container(
@@ -94,7 +87,7 @@ class CustomDrawer extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           icon,
-          color: Colors.grey,
+          color: Colors.black,
         ),
         title: Text(
           title,

@@ -1,6 +1,5 @@
 // lib/services/sheets_service.dart
 import 'package:googleapis/sheets/v4.dart' as sheets;
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:logger/logger.dart';
@@ -25,17 +24,22 @@ class SheetsService {
   Future<AccountInfo> signIn() async {
     try {
       final account = await _googleSignIn.signIn();
-      
-      if (account == null) return AccountInfo(name: '',emailId: '', isLogIn: false);
+
+      if (account == null) {
+        return AccountInfo(name: '', emailId: '', isLogIn: false);
+      }
       final authClient = await _googleSignIn.authenticatedClient();
-      if (authClient == null) return AccountInfo(name: '',emailId: '', isLogIn: false);
+      if (authClient == null) {
+        return AccountInfo(name: '', emailId: '', isLogIn: false);
+      }
       _sheetsApi = sheets.SheetsApi(authClient);
       _isInitialized = true;
       _logger.i('Google Sign-In successful: ${account.email}');
-      return AccountInfo(name: account.email,emailId: account.email, isLogIn: true);
+      return AccountInfo(
+          name: account.email, emailId: account.email, isLogIn: true);
     } catch (e) {
       _logger.e('Sign-in failed: $e');
-      return AccountInfo(name: '',emailId: '', isLogIn: false);
+      return AccountInfo(name: '', emailId: '', isLogIn: false);
     }
   }
 
@@ -45,18 +49,23 @@ class SheetsService {
     _isInitialized = false;
   }
 
-  Future<bool> tryAutoSignIn() async {
+  Future<AccountInfo> tryAutoSignIn() async {
     try {
       final account = await _googleSignIn.signInSilently();
-      if (account == null) return false;
+      if (account == null) {
+        return AccountInfo(name: '', emailId: '', isLogIn: false);
+      }
       final authClient = await _googleSignIn.authenticatedClient();
-      if (authClient == null) return false;
+      if (authClient == null) {
+        return AccountInfo(name: '', emailId: '', isLogIn: false);
+      }
       _sheetsApi = sheets.SheetsApi(authClient);
       _isInitialized = true;
-      return true;
+      return AccountInfo(
+          name: account.email, emailId: account.email, isLogIn: true);
     } catch (e) {
       _logger.w('Auto sign-in failed: $e');
-      return false;
+      return AccountInfo(name: '', emailId: '', isLogIn: false);
     }
   }
 
@@ -115,7 +124,7 @@ class SheetsService {
   Future<MonthlySummary> fetchMonthlySummary({int? year, int? month}) async {
     final now = DateTime.now();
     final targetYear = year ?? now.year;
-    final targetMonth = month ?? now.month ;
+    final targetMonth = month ?? now.month;
     print('targetYear $targetYear targetMonth $targetMonth');
 
     final all = await fetchAllExpenses();

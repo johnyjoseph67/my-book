@@ -12,7 +12,6 @@ class ExpenseProvider extends ChangeNotifier {
   LoadState _loadState = LoadState.idle;
   String _errorMessage = '';
 
-
   List<Expense> _expenses = [];
   MonthlySummary? _currentSummary;
   List<MonthlySummary> _trend = [];
@@ -26,20 +25,25 @@ class ExpenseProvider extends ChangeNotifier {
   MonthlySummary? get currentSummary => _currentSummary;
   List<MonthlySummary> get trend => _trend;
   bool get isLoading => _loadState == LoadState.loading;
-  AccountInfo? get acccountInfo=>_accountInfo;
+  AccountInfo? get acccountInfo => _accountInfo;
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   Future<void> initAuth() async {
-    _isSignedIn = await _service.tryAutoSignIn();
-    if (_isSignedIn) await loadDashboard();
+    final loginData = await _service.tryAutoSignIn();
+    _isSignedIn = loginData.isLogIn;
+    if (_isSignedIn) {
+      _accountInfo = loginData;
+      await loadDashboard();
+    }
     notifyListeners();
   }
 
   Future<bool> signIn() async {
     _setLoading();
-    final signIn=await _service.signIn();
+    final signIn = await _service.signIn();
     _isSignedIn = signIn.isLogIn;
     if (_isSignedIn) {
+      _accountInfo = signIn;
       await loadDashboard();
     } else {
       _setError('Sign-in failed. Please try again.');
@@ -54,6 +58,7 @@ class ExpenseProvider extends ChangeNotifier {
     _expenses = [];
     _currentSummary = null;
     _trend = [];
+    _accountInfo = AccountInfo(emailId: '', name: '', isLogIn: false);
     notifyListeners();
   }
 
@@ -62,7 +67,7 @@ class ExpenseProvider extends ChangeNotifier {
     _setLoading();
     try {
       final results = await Future.wait([
-        _service.fetchMonthlySummary(month: month,year: year),
+        _service.fetchMonthlySummary(month: month, year: year),
         _service.fetchTrend(),
         _service.fetchAllExpenses(),
       ]);
@@ -76,7 +81,8 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> refreshData({int? year, int? month}) => loadDashboard(year: year, month: month);
+  Future<void> refreshData({int? year, int? month}) =>
+      loadDashboard(year: year, month: month);
 
   // ─── Add Expense ───────────────────────────────────────────────────────────
   Future<bool> addExpense(Expense expense) async {
