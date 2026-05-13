@@ -163,8 +163,7 @@ class _HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.surface,
-        drawer: CustomDrawer(),
-  
+      drawer: CustomDrawer(),
       body: RefreshIndicator(
         color: AppTheme.primary,
         onRefresh: () => context.read<ExpenseProvider>().refreshData(),
@@ -175,11 +174,8 @@ class _HomePage extends StatelessWidget {
               floating: true,
               pinned: true,
               backgroundColor: AppTheme.dark,
-              title: Consumer<ExpenseProvider>(
-                builder: (_, provider, __) {
-                  
-               
-                   return Column(
+              title: Consumer<ExpenseProvider>(builder: (_, provider, __) {
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -190,28 +186,28 @@ class _HomePage extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                 
+
                     // const Text('My Expenses',
                     //     style: TextStyle(
                     //         fontSize: 18, fontWeight: FontWeight.w600)),
                   ],
-                );}
-              ),
-              actions: [
-                Consumer<ExpenseProvider>(
-                  builder: (_, provider, __) => IconButton(
-                    icon: const Icon(Icons.logout,
-                        color: Colors.white54, size: 20),
-                    onPressed: () async {
-                      await provider.signOut();
-                      if (context.mounted) {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/', (r) => false);
-                      }
-                    },
-                  ),
-                ),
-              ],
+                );
+              }),
+              // actions: [
+              //   Consumer<ExpenseProvider>(
+              //     builder: (_, provider, __) => IconButton(
+              //       icon: const Icon(Icons.logout,
+              //           color: Colors.white54, size: 20),
+              //       onPressed: () async {
+              //         await provider.signOut();
+              //         if (context.mounted) {
+              //           Navigator.pushNamedAndRemoveUntil(
+              //               context, '/', (r) => false);
+              //         }
+              //       },
+              //     ),
+              //   ),
+              // ],
             ),
             SliverToBoxAdapter(
               child: Consumer<ExpenseProvider>(
