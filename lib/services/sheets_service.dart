@@ -98,7 +98,7 @@ class SheetsService {
 
   // ─── Read All Expenses ─────────────────────────────────────────────────────
 
-  Future<List<Expense>> fetchAllExpenses() async {
+  Future<List<Expense>> fetchAllExpenses({String? emailId}) async {
     if (!_isInitialized || _sheetsApi == null) {
       throw Exception('Not authenticated.');
     }
@@ -108,6 +108,7 @@ class SheetsService {
         AppConstants.readRange,
       );
       final rows = response.values ?? [];
+
       return rows
           .where((row) => row.isNotEmpty && row.length >= 3)
           .map((row) => Expense.fromSheetRow(row))
@@ -121,7 +122,8 @@ class SheetsService {
 
   // ─── Monthly Summary ───────────────────────────────────────────────────────
 
-  Future<MonthlySummary> fetchMonthlySummary({int? year, int? month}) async {
+  Future<MonthlySummary> fetchMonthlySummary(
+      {int? year, int? month, String? emailId}) async {
     final now = DateTime.now();
     final targetYear = year ?? now.year;
     final targetMonth = month ?? now.month;
@@ -131,7 +133,7 @@ class SheetsService {
         .where((e) =>
             e.date.year == targetYear &&
             e.date.month == targetMonth &&
-            e.emailId == 'johnyjoseph67@gmail.com')
+            e.emailId == emailId)
         .toList();
 
     final byCategory = <String, double>{};
@@ -151,7 +153,7 @@ class SheetsService {
 
   // ─── Last 6 Months Trend ───────────────────────────────────────────────────
 
-  Future<List<MonthlySummary>> fetchTrend() async {
+  Future<List<MonthlySummary>> fetchTrend({String? emailId}) async {
     final all = await fetchAllExpenses();
     final now = DateTime.now();
     final results = <MonthlySummary>[];
@@ -159,7 +161,10 @@ class SheetsService {
     for (int i = 5; i >= 0; i--) {
       final date = DateTime(now.year, now.month - i, 1);
       final filtered = all
-          .where((e) => e.date.year == date.year && e.date.month == date.month)
+          .where((e) =>
+              e.date.year == date.year &&
+              e.date.month == date.month &&
+              e.emailId == emailId)
           .toList();
       final byCategory = <String, double>{};
       for (final e in filtered) {

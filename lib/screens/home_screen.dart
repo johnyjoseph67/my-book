@@ -1,5 +1,6 @@
 // lib/screens/home_screen.dart
 import 'package:expense_tracker/screens/custom_drawer.dart';
+import 'package:expense_tracker/screens/empty_state.dart';
 import 'package:expense_tracker/screens/history_screen.dart';
 import 'package:flutter/material.dart';
 // import 'package:intl/intl.dart';
@@ -258,14 +259,20 @@ class _HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (provider.recentExpenses.isEmpty)
-                        const _EmptyState()
+                      if (provider.recentExpenses
+                          .where((e) => e.emailId == AppConstants.getEmailId())
+                          .toList()
+                          .isEmpty)
+                        const EmptyState()
                       else
                         ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(horizontal: 16),
-                          itemCount: provider.recentExpenses.length,
+                          itemCount: provider.recentExpenses
+                              .where(
+                                  (e) => e.emailId == AppConstants.getEmailId())
+                              .length,
                           separatorBuilder: (_, __) =>
                               const SizedBox(height: 8),
                           itemBuilder: (_, i) =>
@@ -288,36 +295,5 @@ class _HomePage extends StatelessWidget {
     if (h < 12) return 'morning';
     if (h < 17) return 'afternoon';
     return 'evening';
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(40),
-      child: Center(
-        child: Column(
-          children: [
-            Text('📭', style: TextStyle(fontSize: 48)),
-            SizedBox(height: 12),
-            Text(
-              'No expenses yet',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.dark),
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Tap + to add your first expense',
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

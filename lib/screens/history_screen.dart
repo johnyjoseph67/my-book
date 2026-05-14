@@ -1,3 +1,4 @@
+import 'package:expense_tracker/screens/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/expense_provider.dart';
@@ -34,10 +35,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
               child: CircularProgressIndicator(color: AppTheme.primary),
             );
           }
+          final data = provider.expenses
+              .where((e) => e.emailId == AppConstants.getEmailId());
 
-          final summary = provider.currentSummary;
-          if (summary == null) {
-            return const Center(child: Text('No data available'));
+          // final summary = provider.currentSummary;
+          if (data.length.toString() == '0') {
+            return const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                EmptyState(),
+              ],
+            );
           }
 
           return RefreshIndicator(
@@ -51,10 +59,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   // ── All Transactions ──────────────────────────────────────
                   // _SectionTitle('All Transactions'),
                   const SizedBox(height: 10),
-                  ...provider.expenses.map((e) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: ExpenseTile(expense: e),
-                      )),
+                  ...provider.expenses
+                      .where((e) => e.emailId == AppConstants.getEmailId())
+                      .map((e) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: ExpenseTile(expense: e),
+                          )),
                   const SizedBox(height: 100),
                 ],
               ),

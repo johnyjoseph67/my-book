@@ -1,6 +1,9 @@
 // lib/services/expense_provider.dart
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import '../models/expense_model.dart';
+import '../utils/app_theme.dart';
 import 'sheets_service.dart';
 
 enum LoadState { idle, loading, success, error }
@@ -11,6 +14,7 @@ class ExpenseProvider extends ChangeNotifier {
   bool _isSignedIn = false;
   LoadState _loadState = LoadState.idle;
   String _errorMessage = '';
+  String? _selectedEmailId;
 
   List<Expense> _expenses = [];
   MonthlySummary? _currentSummary;
@@ -26,6 +30,13 @@ class ExpenseProvider extends ChangeNotifier {
   List<MonthlySummary> get trend => _trend;
   bool get isLoading => _loadState == LoadState.loading;
   AccountInfo? get acccountInfo => _accountInfo;
+  String? get selectedEmailId => _selectedEmailId;
+  List<String> get availableEmails => _expenses
+      .map((e) => e.emailId)
+      .where((e) => e.isNotEmpty)
+      .toSet()
+      .toList()
+    ..sort();
 
   // ─── Auth ──────────────────────────────────────────────────────────────────
   Future<void> initAuth() async {
@@ -33,6 +44,8 @@ class ExpenseProvider extends ChangeNotifier {
     _isSignedIn = loginData.isLogIn;
     if (_isSignedIn) {
       _accountInfo = loginData;
+      // Store the auto-signed-in email globally in AppConstants
+      AppConstants.userEmailId = loginData.emailId;
       await loadDashboard();
     }
     notifyListeners();
@@ -44,6 +57,8 @@ class ExpenseProvider extends ChangeNotifier {
     _isSignedIn = signIn.isLogIn;
     if (_isSignedIn) {
       _accountInfo = signIn;
+      // Store the signed-in email globally in AppConstants
+      AppConstants.userEmailId = signIn.emailId;
       await loadDashboard();
     } else {
       _setError('Sign-in failed. Please try again.');
@@ -64,11 +79,13 @@ class ExpenseProvider extends ChangeNotifier {
 
   // ─── Data Loading ──────────────────────────────────────────────────────────
   Future<void> loadDashboard({int? month, int? year}) async {
+    String? authEmailID = AppConstants.getEmailId();
     _setLoading();
     try {
       final results = await Future.wait([
-        _service.fetchMonthlySummary(month: month, year: year),
-        _service.fetchTrend(),
+        _service.fetchMonthlySummary(
+            month: month, year: year, emailId: authEmailID),
+        _service.fetchTrend(emailId: authEmailID),
         _service.fetchAllExpenses(),
       ]);
       _currentSummary = results[0] as MonthlySummary;
@@ -93,7 +110,8 @@ class ExpenseProvider extends ChangeNotifier {
         // Update current summary locally for instant UI feedback
         if (_currentSummary != null &&
             expense.date.month == DateTime.now().month &&
-            expense.date.year == DateTime.now().year) {
+            expense.date.year == DateTime.now().year &&
+            expense.emailId == AppConstants.getEmailId()) {
           final updated = MonthlySummary(
             year: _currentSummary!.year,
             month: _currentSummary!.month,

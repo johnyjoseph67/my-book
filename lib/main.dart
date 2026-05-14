@@ -21,12 +21,14 @@ void main() async {
 
 class ExpenseTrackerApp extends StatelessWidget {
   const ExpenseTrackerApp({super.key});
-
+  // Single shared instance so navigatorKey is accessible everywhere
+  static final _appConstants = AppConstants();
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => ExpenseProvider()..initAuth(),
       child: MaterialApp(
+        navigatorKey: _appConstants.navigatorKey,
         title: 'Expense Tracker',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,

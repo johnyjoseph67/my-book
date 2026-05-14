@@ -1,8 +1,5 @@
 // lib/utils/app_theme.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../services/expense_provider.dart';
 
 class AppTheme extends ChangeNotifier {
   static const Color primary = Color(0xFF1D9E75);
@@ -88,18 +85,8 @@ class AppTheme extends ChangeNotifier {
 class AppConstants {
   static String? userEmailId = '';
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
   BuildContext? get globalContext => navigatorKey.currentContext;
-  String? getEmailId() {
-    final context = globalContext;
-
-    if (context == null) return null;
-
-    final data = Provider.of<ExpenseProvider>(context, listen: false);
-    final emailId = data.acccountInfo != null ? data.acccountInfo?.emailId : '';
-    userEmailId = emailId;
-    return emailId;
-  }
+  static String? getEmailId() => userEmailId;
 
   // ⚠️ Replace with your actual Google Sheets ID
   static const String spreadsheetId =
