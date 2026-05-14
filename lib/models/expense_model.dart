@@ -1,14 +1,16 @@
 // lib/models/expense_model.dart
 import 'package:flutter/material.dart';
 import '../utils/app_theme.dart';
+
 class AccountInfo {
   final String? name;
   final String emailId;
   final bool isLogIn;
 
-  AccountInfo({required this.name,required this.emailId, required this.isLogIn});
-  
+  AccountInfo(
+      {required this.name, required this.emailId, required this.isLogIn});
 }
+
 class Expense {
   final String id;
   final DateTime date;
@@ -17,16 +19,17 @@ class Expense {
   final String subCategory;
   final String paymentMethod;
   final String note;
+  final String emailId;
 
-  Expense({
-    required this.id,
-    required this.date,
-    required this.amount,
-    required this.category,
-    required this.subCategory,
-    required this.paymentMethod,
-    this.note = '',
-  });
+  Expense(
+      {required this.id,
+      required this.date,
+      required this.amount,
+      required this.category,
+      required this.subCategory,
+      required this.paymentMethod,
+      this.note = '',
+      required this.emailId});
 
   // Convert to Google Sheets row (list of values)
   List<dynamic> toSheetRow() {
@@ -38,6 +41,7 @@ class Expense {
       paymentMethod,
       note,
       id,
+      emailId
     ];
   }
 
@@ -45,14 +49,20 @@ class Expense {
   factory Expense.fromSheetRow(List<dynamic> row) {
     final parts = (row[0] as String).split('/');
     return Expense(
-      id: row.length > 6 ? row[6].toString() : DateTime.now().millisecondsSinceEpoch.toString(),
-      date: DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0])),
-      amount: double.tryParse(row[1].toString()) ?? 0.0,
-      category: row[2].toString(),
-      subCategory: row.length > 3 ? row[3].toString() : '',
-      paymentMethod: row.length > 4 ? row[4].toString() : 'Cash',
-      note: row.length > 5 ? row[5].toString() : '',
-    );
+        id: row.length > 6
+            ? row[6].toString()
+            : DateTime.now().millisecondsSinceEpoch.toString(),
+        date: DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        ),
+        amount: double.tryParse(row[1].toString()) ?? 0.0,
+        category: row[2].toString(),
+        subCategory: row.length > 3 ? row[3].toString() : '',
+        paymentMethod: row.length > 4 ? row[4].toString() : 'Cash',
+        note: row.length > 5 ? row[5].toString() : '',
+        emailId: row.length > 7 ? row[7].toString() : 'Cash');
   }
 
   ExpenseCategory get categoryData {
@@ -84,11 +94,24 @@ class MonthlySummary {
   });
 
   double get remaining => budget - totalSpent;
-  double get percentUsed => budget > 0 ? (totalSpent / budget * 100).clamp(0, 100) : 0;
+  double get percentUsed =>
+      budget > 0 ? (totalSpent / budget * 100).clamp(0, 100) : 0;
 
   String get monthName {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return months[month - 1];
   }
 }

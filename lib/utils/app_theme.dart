@@ -1,7 +1,10 @@
 // lib/utils/app_theme.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class AppTheme {
+import '../services/expense_provider.dart';
+
+class AppTheme extends ChangeNotifier {
   static const Color primary = Color(0xFF1D9E75);
   static const Color primaryDark = Color(0xFF0F6E56);
   static const Color primaryLight = Color(0xFFE1F5EE);
@@ -83,6 +86,21 @@ class AppTheme {
 }
 
 class AppConstants {
+  static String? userEmailId = '';
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  BuildContext? get globalContext => navigatorKey.currentContext;
+  String? getEmailId() {
+    final context = globalContext;
+
+    if (context == null) return null;
+
+    final data = Provider.of<ExpenseProvider>(context, listen: false);
+    final emailId = data.acccountInfo != null ? data.acccountInfo?.emailId : '';
+    userEmailId = emailId;
+    return emailId;
+  }
+
   // ⚠️ Replace with your actual Google Sheets ID
   static const String spreadsheetId =
       '1Je0K37fXvHvzGJ9tRBhqbp8ewDHIXck_8ite3mlXkDY';
@@ -97,8 +115,8 @@ class AppConstants {
   // A=Date, B=Amount, C=Category, D=SubCategory, E=PaymentMethod, F=Note, G=ID
   // Note: Quoting the tab name makes the Sheets API range parser robust
   // (especially if you rename the tab to include spaces/special characters).
-  static const String writeRange = "'$expenseSheet'!A:G";
-  static const String readRange = "'$expenseSheet'!A2:G";
+  static const String writeRange = "'$expenseSheet'!A:H";
+  static const String readRange = "'$expenseSheet'!A2:H";
 
   static const List<ExpenseCategory> categories = [
     ExpenseCategory(

@@ -125,11 +125,13 @@ class SheetsService {
     final now = DateTime.now();
     final targetYear = year ?? now.year;
     final targetMonth = month ?? now.month;
-    print('targetYear $targetYear targetMonth $targetMonth');
 
     final all = await fetchAllExpenses();
     final filtered = all
-        .where((e) => e.date.year == targetYear && e.date.month == targetMonth)
+        .where((e) =>
+            e.date.year == targetYear &&
+            e.date.month == targetMonth &&
+            e.emailId == 'johnyjoseph67@gmail.com')
         .toList();
 
     final byCategory = <String, double>{};

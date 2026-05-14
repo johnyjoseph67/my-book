@@ -80,19 +80,19 @@ class _AddExpenseScreenState extends State<AddExpenseScreen>
 
     setState(() => _isSaving = true);
 
-    final expense = Expense(
-      id: const Uuid().v4(),
-      date: _selectedDate,
-      amount: double.parse(_amountController.text.trim()),
-      category: _selectedCategory,
-      subCategory: _selectedSubCategory,
-      paymentMethod: _selectedPayment,
-      note: _noteController.text.trim(),
-    );
-
     final provider = context.read<ExpenseProvider>();
-    final success = await provider.addExpense(expense);
+    final accountInfo = provider.acccountInfo;
+    final expense = Expense(
+        id: const Uuid().v4(),
+        date: _selectedDate,
+        amount: double.parse(_amountController.text.trim()),
+        category: _selectedCategory,
+        subCategory: _selectedSubCategory,
+        paymentMethod: _selectedPayment,
+        note: _noteController.text.trim(),
+        emailId: accountInfo != null ? accountInfo.emailId : '');
 
+    final success = await provider.addExpense(expense);
     if (mounted) {
       if (success) {
         setState(() {
