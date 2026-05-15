@@ -1,15 +1,23 @@
 import 'package:expense_tracker/services/expense_provider.dart';
 import 'package:expense_tracker/utils/app_theme.dart';
+import 'package:expense_tracker/widgets/slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({super.key});
 
+  @override
+  State<CustomDrawer> createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(child: Consumer<ExpenseProvider>(builder: (_, provider, __) {
       final accountInfo = provider.acccountInfo;
+      double currentDiscreteSliderValue = 60;
+
       return Column(
         children: [
           // TOP HEADER
@@ -55,6 +63,18 @@ class CustomDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Text(
+                    "Budget",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppTheme.dark),
+                  ),
+                ),
+                SliderExample(),
                 drawerItem(
                   icon: Icons.logout_sharp,
                   title: "Log Out",
