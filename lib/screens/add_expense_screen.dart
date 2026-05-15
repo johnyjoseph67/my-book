@@ -7,6 +7,9 @@ import 'package:uuid/uuid.dart';
 import '../models/expense_model.dart';
 import '../services/expense_provider.dart';
 import '../utils/app_theme.dart';
+import '../widgets/add_expence/amount_input.dart';
+import '../widgets/add_expence/section_label.dart';
+import '../widgets/add_expence/styled_dropdown.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -146,365 +149,232 @@ class _AddExpenseScreenState extends State<AddExpenseScreen>
       appBar: AppBar(
         backgroundColor: AppTheme.primaryDark,
         title: const Text('Add Expense'),
-        // subtitle: const Text(
-        //   'Syncs to Google Sheets',
-        //   style: TextStyle(
-        //       fontSize: 11, color: Colors.white54),
-        // ),
         automaticallyImplyLeading: false,
       ),
       body: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ── Amount Input ──────────────────────────────────────────────
-              _AmountInput(controller: _amountController),
-              const SizedBox(height: 24),
+        child: _addExpencePageContent(),
+      ),
+    );
+  }
 
-              // ── Category Selector ─────────────────────────────────────────
-              _SectionLabel('Category'),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 44,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: AppConstants.categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (_, i) {
-                    final cat = AppConstants.categories[i];
-                    final isSelected = cat.name == _selectedCategory;
-                    return GestureDetector(
-                      onTap: () => setState(() {
-                        _selectedCategory = cat.name;
-                        _selectedSubCategory =
-                            AppConstants.subCategories[cat.name]!.first;
-                      }),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppTheme.dark : Colors.white,
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppTheme.dark
-                                : Colors.black.withOpacity(0.1),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Text(cat.emoji,
-                                style: const TextStyle(fontSize: 14)),
-                            const SizedBox(width: 6),
-                            Text(
-                              cat.name,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected ? Colors.white : AppTheme.dark,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+  SingleChildScrollView _addExpencePageContent() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Amount Input ──────────────────────────────────────────────
+          AmountInput(controller: _amountController),
+          const SizedBox(height: 24),
+
+          // ── Category Selector ─────────────────────────────────────────
+          const SectionLabel('Category'),
+          const SizedBox(height: 10),
+          _category(),
+          const SizedBox(height: 20),
+
+          // ── Sub-category Dropdown ─────────────────────────────────────
+          const SectionLabel('Sub-category'),
+          const SizedBox(height: 8),
+          StyledDropdown<String>(
+            value: _selectedSubCategory,
+            items: _subCategories,
+            itemLabel: (s) => s,
+            onChanged: (v) => setState(() => _selectedSubCategory = v!),
+            prefixEmoji: _currentCategory.emoji,
+          ),
+          const SizedBox(height: 20),
+
+          // ── Date & Payment Row ────────────────────────────────────────
+          _paymentModeAndDate(),
+          const SizedBox(height: 20),
+
+          // ── Note ──────────────────────────────────────────────────────
+          const SectionLabel('Note (optional)'),
+          const SizedBox(height: 8),
+          _addNote(),
+          const SizedBox(height: 32),
+
+          // ── Save Button ───────────────────────────────────────────────
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _saveSuccess ? _saveGoogleAccountButton() : _saveButton(),
+          ),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Widget _category() {
+    return SizedBox(
+      height: 44,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: AppConstants.categories.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (_, i) {
+          final cat = AppConstants.categories[i];
+          final isSelected = cat.name == _selectedCategory;
+          return GestureDetector(
+            onTap: () => setState(() {
+              _selectedCategory = cat.name;
+              _selectedSubCategory =
+                  AppConstants.subCategories[cat.name]!.first;
+            }),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected ? AppTheme.dark : Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: isSelected
+                      ? AppTheme.dark
+                      : Colors.black.withOpacity(0.1),
                 ),
               ),
-              const SizedBox(height: 20),
-
-              // ── Sub-category Dropdown ─────────────────────────────────────
-              const _SectionLabel('Sub-category'),
-              const SizedBox(height: 8),
-              _StyledDropdown<String>(
-                value: _selectedSubCategory,
-                items: _subCategories,
-                itemLabel: (s) => s,
-                onChanged: (v) => setState(() => _selectedSubCategory = v!),
-                prefixEmoji: _currentCategory.emoji,
-              ),
-              const SizedBox(height: 20),
-
-              // ── Date & Payment Row ────────────────────────────────────────
-              Row(
+              child: Row(
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _SectionLabel('Date'),
-                        const SizedBox(height: 8),
-                        GestureDetector(
-                          onTap: _pickDate,
-                          child: Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.black.withOpacity(0.1),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            child: Row(
-                              children: [
-                                const Text('📅',
-                                    style: TextStyle(fontSize: 14)),
-                                const SizedBox(width: 8),
-                                Text(
-                                  DateFormat('dd MMM yyyy')
-                                      .format(_selectedDate),
-                                  style: const TextStyle(
-                                      fontSize: 12, color: AppTheme.dark),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _SectionLabel('Payment'),
-                        const SizedBox(height: 8),
-                        _StyledDropdown<String>(
-                          value: _selectedPayment,
-                          items: AppConstants.paymentMethods,
-                          itemLabel: (s) => s,
-                          onChanged: (v) =>
-                              setState(() => _selectedPayment = v!),
-                        ),
-                      ],
+                  Text(cat.emoji, style: const TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Text(
+                    cat.name,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? Colors.white : AppTheme.dark,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
-              // ── Note ──────────────────────────────────────────────────────
-              const _SectionLabel('Note (optional)'),
+  Widget _paymentModeAndDate() {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionLabel('Date'),
               const SizedBox(height: 8),
-              TextFormField(
-                controller: _noteController,
-                maxLines: 2,
-                style: const TextStyle(fontSize: 13),
-                decoration: const InputDecoration(
-                  hintText: 'Add a description...',
-                  hintStyle: TextStyle(color: AppTheme.textSecondary),
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              // ── Save Button ───────────────────────────────────────────────
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: _saveSuccess
-                    ? ScaleTransition(
-                        scale: _scaleAnim,
-                        child: Container(
-                          key: const ValueKey('success'),
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: AppTheme.primary,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.check_circle,
-                                  color: Colors.white, size: 20),
-                              SizedBox(width: 8),
-                              Text(
-                                'Saved to Google Sheets!',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : ElevatedButton(
-                        key: const ValueKey('save'),
-                        onPressed: _isSaving ? null : _saveExpense,
-                        child: _isSaving
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text('Save to Google Sheets'),
-                      ),
-              ),
-              const SizedBox(height: 100),
+              _datePicker(),
             ],
           ),
+        ),
+        const SizedBox(width: 12),
+        _paymentMode(),
+      ],
+    );
+  }
+
+  Widget _datePicker() {
+    return GestureDetector(
+      onTap: _pickDate,
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.black.withOpacity(0.1),
+          ),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        child: Row(
+          children: [
+            const Text('📅', style: TextStyle(fontSize: 14)),
+            const SizedBox(width: 8),
+            Text(
+              DateFormat('dd MMM yyyy').format(_selectedDate),
+              style: const TextStyle(fontSize: 12, color: AppTheme.dark),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
-// ─── Supporting Widgets ────────────────────────────────────────────────────────
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  const _SectionLabel(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: AppTheme.textSecondary,
-        letterSpacing: 0.3,
-      ),
-    );
-  }
-}
-
-class _AmountInput extends StatelessWidget {
-  final TextEditingController controller;
-  const _AmountInput({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.06), width: 0.5),
-      ),
+  Widget _paymentMode() {
+    return Expanded(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Enter Amount (AED)',
-            style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
-          ),
+          const SectionLabel('Payment'),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              const Text(
-                'AED ',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: AppTheme.textSecondary,
-                ),
-              ),
-              Flexible(
-                child: TextFormField(
-                  controller: controller,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))
-                  ],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.dark,
-                  ),
-                  decoration: const InputDecoration(
-                    hintText: '0.00',
-                    hintStyle: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFFCCC),
-                    ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Enter an amount';
-                    final val = double.tryParse(v);
-                    if (val == null || val <= 0) return 'Enter a valid amount';
-                    return null;
-                  },
-                ),
-              ),
-            ],
+          StyledDropdown<String>(
+            value: _selectedPayment,
+            items: AppConstants.paymentMethods,
+            itemLabel: (s) => s,
+            onChanged: (v) => setState(() => _selectedPayment = v!),
           ),
         ],
       ),
     );
   }
-}
 
-class _StyledDropdown<T> extends StatelessWidget {
-  final T value;
-  final List<T> items;
-  final String Function(T) itemLabel;
-  final ValueChanged<T?> onChanged;
-  final String? prefixEmoji;
-
-  const _StyledDropdown({
-    required this.value,
-    required this.items,
-    required this.itemLabel,
-    required this.onChanged,
-    this.prefixEmoji,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.1)),
+  Widget _addNote() {
+    return TextFormField(
+      controller: _noteController,
+      maxLines: 2,
+      style: const TextStyle(fontSize: 13),
+      decoration: const InputDecoration(
+        hintText: 'Add a description...',
+        hintStyle: TextStyle(color: AppTheme.textSecondary),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
-          value: value,
-          isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down,
-              color: AppTheme.textSecondary, size: 18),
-          style: const TextStyle(
-              fontSize: 13, color: AppTheme.dark, fontFamily: 'DMSans'),
-          onChanged: onChanged,
-          items: items
-              .map((item) => DropdownMenuItem<T>(
-                    value: item,
-                    child: Row(
-                      children: [
-                        if (prefixEmoji != null && item == value) ...[
-                          Text(prefixEmoji!,
-                              style: const TextStyle(fontSize: 14)),
-                          const SizedBox(width: 6),
-                        ],
-                        Text(itemLabel(item)),
-                      ],
-                    ),
-                  ))
-              .toList(),
+    );
+  }
+
+  Widget _saveGoogleAccountButton() {
+    return ScaleTransition(
+      scale: _scaleAnim,
+      child: Container(
+        key: const ValueKey('success'),
+        height: 52,
+        decoration: BoxDecoration(
+          color: AppTheme.primary,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.check_circle, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Saved to Google Sheets!',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _saveButton() {
+    return ElevatedButton(
+      key: const ValueKey('save'),
+      onPressed: _isSaving ? null : _saveExpense,
+      child: _isSaving
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            )
+          : const Text('Save to Google Sheets'),
     );
   }
 }

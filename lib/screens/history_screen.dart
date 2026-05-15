@@ -1,4 +1,4 @@
-import 'package:expense_tracker/screens/empty_state.dart';
+import 'package:expense_tracker/widgets/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/expense_provider.dart';
