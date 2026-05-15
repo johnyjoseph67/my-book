@@ -37,14 +37,6 @@ class AppTheme extends ChangeNotifier {
             color: Colors.white,
           ),
         ),
-        // cardTheme: CardTheme(
-        //   color: white,
-        //   elevation: 0,
-        //   shape: RoundedRectangleBorder(
-        //     borderRadius: BorderRadius.circular(16),
-        //     side: BorderSide(color: Colors.black.withOpacity(0.06), width: 0.5),
-        //   ),
-        // ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: white,
@@ -87,7 +79,7 @@ class AppConstants {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   BuildContext? get globalContext => navigatorKey.currentContext;
   static String? getEmailId() => userEmailId;
-
+  static double budget = 4000;
   // ⚠️ Replace with your actual Google Sheets ID
   static const String spreadsheetId =
       '1Je0K37fXvHvzGJ9tRBhqbp8ewDHIXck_8ite3mlXkDY';
