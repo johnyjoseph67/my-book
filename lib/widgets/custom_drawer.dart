@@ -66,15 +66,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 const SizedBox(height: 20),
                 const Padding(
                   padding: const EdgeInsets.only(left: 16),
-                  child: Text(
-                    "Budget",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: AppTheme.dark),
-                  ),
+                  // child: Text(
+                  //   "Budget",
+                  //   style: TextStyle(
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: 16,
+                  //       color: AppTheme.dark),
+                  // ),
                 ),
-                SliderExample(),
+                // SliderExample(),
                 drawerItem(
                   icon: Icons.logout_sharp,
                   title: "Log Out",
