@@ -146,7 +146,7 @@ class SheetsService {
       month: targetMonth,
       totalSpent: filtered.fold(0, (sum, e) => sum + e.amount),
       budget:
-          AppConstants.budget, // TODO: read budget from a Settings sheet row
+          filtered.last.budget, // TODO: read budget from a Settings sheet row
       byCategory: byCategory,
       expenses: filtered,
     );
@@ -175,7 +175,7 @@ class SheetsService {
         year: date.year,
         month: date.month,
         totalSpent: filtered.fold(0, (sum, e) => sum + e.amount),
-        budget: AppConstants.budget,
+        budget: 0,
         byCategory: byCategory,
         expenses: filtered,
       ));

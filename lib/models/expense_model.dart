@@ -20,6 +20,7 @@ class Expense {
   final String paymentMethod;
   final String note;
   final String emailId;
+  final double budget;
 
   Expense(
       {required this.id,
@@ -29,7 +30,8 @@ class Expense {
       required this.subCategory,
       required this.paymentMethod,
       this.note = '',
-      required this.emailId});
+      required this.emailId,
+      required this.budget});
 
   // Convert to Google Sheets row (list of values)
   List<dynamic> toSheetRow() {
@@ -62,7 +64,11 @@ class Expense {
         subCategory: row.length > 3 ? row[3].toString() : '',
         paymentMethod: row.length > 4 ? row[4].toString() : 'Cash',
         note: row.length > 5 ? row[5].toString() : '',
-        emailId: row.length > 7 ? row[7].toString() : 'Cash');
+        emailId: row.length > 7 ? row[7].toString() : 'Cash',
+        budget: double.tryParse(row[8].toString()) ?? 0.0
+        // row.length > 8 ? row[8] : 0
+
+        );
   }
 
   ExpenseCategory get categoryData {

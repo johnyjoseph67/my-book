@@ -93,7 +93,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen>
         subCategory: _selectedSubCategory,
         paymentMethod: _selectedPayment,
         note: _noteController.text.trim(),
-        emailId: accountInfo != null ? accountInfo.emailId : '');
+        emailId: accountInfo != null ? accountInfo.emailId : '',
+        budget: 0);
 
     final success = await provider.addExpense(expense);
     if (mounted) {

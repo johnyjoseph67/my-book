@@ -1,6 +1,5 @@
 import 'package:expense_tracker/services/expense_provider.dart';
 import 'package:expense_tracker/utils/app_theme.dart';
-import 'package:expense_tracker/widgets/slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +15,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget build(BuildContext context) {
     return Drawer(child: Consumer<ExpenseProvider>(builder: (_, provider, __) {
       final accountInfo = provider.acccountInfo;
-      double currentDiscreteSliderValue = 60;
 
       return Column(
         children: [

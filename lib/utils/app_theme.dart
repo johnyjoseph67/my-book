@@ -79,7 +79,6 @@ class AppConstants {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   BuildContext? get globalContext => navigatorKey.currentContext;
   static String? getEmailId() => userEmailId;
-  static double budget = 4000;
   // ⚠️ Replace with your actual Google Sheets ID
   static const String spreadsheetId =
       '1Je0K37fXvHvzGJ9tRBhqbp8ewDHIXck_8ite3mlXkDY';
@@ -95,7 +94,7 @@ class AppConstants {
   // Note: Quoting the tab name makes the Sheets API range parser robust
   // (especially if you rename the tab to include spaces/special characters).
   static const String writeRange = "'$expenseSheet'!A:H";
-  static const String readRange = "'$expenseSheet'!A2:H";
+  static const String readRange = "'$expenseSheet'!A2:I";
 
   static const List<ExpenseCategory> categories = [
     ExpenseCategory(
