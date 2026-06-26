@@ -72,22 +72,20 @@ class _SplashScreenState extends State<SplashScreen>
   Widget _spalshScreenContent() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          width: 64,
-          height: 64,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             color: AppTheme.primary,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Center(
-            child: Text('💰', style: TextStyle(fontSize: 32)),
-          ),
+          child: Image.asset('assets/logo.png'),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 12),
         const Text(
-          'Expense\nTracker',
+          'My Book',
           style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.w700,
@@ -95,16 +93,16 @@ class _SplashScreenState extends State<SplashScreen>
             height: 1.1,
           ),
         ),
-        const SizedBox(height: 12),
-        Text(
-          'Sync your expenses directly\nto Google Sheets.',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white.withOpacity(0.55),
-            height: 1.5,
-          ),
-        ),
-        const SizedBox(height: 60),
+        // const SizedBox(height: 12),
+        // Text(
+        //   'Sync your expenses directly to Google Sheets.',
+        //   style: TextStyle(
+        //     fontSize: 16,
+        //     color: Colors.white.withOpacity(0.55),
+        //     height: 1.5,
+        //   ),
+        // ),
+        const SizedBox(height: 20),
         Consumer<ExpenseProvider>(
           builder: (context, provider, _) {
             if (provider.isLoading) {
