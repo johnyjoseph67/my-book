@@ -1,7 +1,7 @@
 name: expense_tracker
 description: Personal Expense Tracker with Google Sheets Integration
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -40,6 +40,7 @@ dependencies:
   # Utils
   uuid: ^4.4.0
   logger: ^2.3.0
+  package_info_plus: ^9.0.1
 
 dev_dependencies:
   flutter_test:

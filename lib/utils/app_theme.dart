@@ -95,8 +95,9 @@ class AppConstants {
   // Note: Quoting the tab name makes the Sheets API range parser robust
   // (especially if you rename the tab to include spaces/special characters).
   static const String writeRange = "'$expenseSheet'!A:H";
-  static const String readRange = "'$expenseSheet'!A2:H";
-
+  static const String readRange = "'$expenseSheet'!A2:I";
+  static const String profile_pic =
+      'https://drive.usercontent.google.com/download?id=1IEB9QXhN-JW5JbzreT64igxCq7y4fKMb';
   static const List<ExpenseCategory> categories = [
     ExpenseCategory(
         name: 'Housing',

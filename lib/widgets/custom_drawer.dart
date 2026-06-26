@@ -2,6 +2,7 @@ import 'package:expense_tracker/services/expense_provider.dart';
 import 'package:expense_tracker/utils/app_theme.dart';
 import 'package:expense_tracker/widgets/slider.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -12,6 +13,29 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
+  @override
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+    installerStore: 'Unknown',
+  );
+  @override
+  void initState() {
+    _loadVersion();
+    super.initState();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+
+    setState(() {
+      _packageInfo = info;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(child: Consumer<ExpenseProvider>(builder: (_, provider, __) {
@@ -32,13 +56,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
               children: [
                 // PROFILE IMAGE
                 const CircleAvatar(
-                  backgroundColor: AppTheme.primary,
-                  radius: 40,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 40,
-                  ),
+                  backgroundImage: NetworkImage(AppConstants.profile_pic),
+                  radius: 70,
                 ),
 
                 const SizedBox(height: 10),
@@ -65,7 +84,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               children: [
                 const SizedBox(height: 20),
                 const Padding(
-                  padding: const EdgeInsets.only(left: 16),
+                  padding: EdgeInsets.only(left: 16),
                   // child: Text(
                   //   "Budget",
                   //   style: TextStyle(
@@ -90,6 +109,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ],
             ),
           ),
+
+          const Spacer(),
+          Text(
+            'Version: ${_packageInfo.version}',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 20)
         ],
       );
     }));
@@ -102,21 +128,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
     required VoidCallback ontap,
     bool isSelected = false,
   }) {
-    return Container(
-      color: isSelected ? Colors.grey.shade200 : Colors.transparent,
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: Colors.black,
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-        ),
-        onTap: ontap,
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: Colors.black,
       ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      ),
+      onTap: ontap,
     );
   }
 }
