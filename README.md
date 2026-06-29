@@ -118,8 +118,6 @@ Certificate[1]:
 Owner: C=US, O=Android, CN=Android Debug
 Issuer: C=US, O=Android, CN=Android Debug
 Serial number: 1
-<img width="300" height="500" alt="WhatsApp Image 2026-06-29 at 10 07 22 AM" src="https://github.com/user-attachments/assets/13197a7f-219b-400e-aec9-8f080038544e" />
-
 Valid from: Wed Apr 22 14:30:02 GMT+04:00 2026 until: Fri Apr 14 14:30:02 GMT+04:00 2056
 Certificate fingerprints:
          SHA1: F0:6B:99:FE:E8:25:68:C7:B3:4E:01:94:3F:6B:75:B4:C3:80:E9:43
@@ -127,3 +125,4 @@ Certificate fingerprints:
 Signature algorithm name: SHA256withRSA
 Subject Public Key Algorithm: 2048-bit RSA key
 Version: 1
+<img width="300" height="600" alt="WhatsApp Image 2026-06-29 at 10 07 22 AM" src="https://github.com/user-attachments/assets/13197a7f-219b-400e-aec9-8f080038544e" />
